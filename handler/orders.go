@@ -84,7 +84,7 @@ func (h *orderHandler) Update(c *gin.Context) {
 		return
 	}
 
-	var inputData orders.SaveOrderInput
+	var inputData orders.UpdateOrderInput
 	err = c.ShouldBindJSON(&inputData)
 	if err != nil {
 		errors := helper.FormatValidationError(err)

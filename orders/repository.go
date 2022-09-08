@@ -50,7 +50,7 @@ func (r *repository) Save(order Order) (Order, error) {
 }
 
 func (r *repository) Update(order Order) (Order, error) {
-	err := r.db.Save(&order).Error
+	err := r.db.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&order).Error
 	if err != nil {
 		return order, err
 	}

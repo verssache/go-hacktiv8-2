@@ -4,7 +4,7 @@ type Service interface {
 	FindAll() ([]Order, error)
 	FindByID(ID FindOrderInput) (Order, error)
 	Save(orderInput SaveOrderInput) (Order, error)
-	Update(ID FindOrderInput, orderInput SaveOrderInput) (Order, error)
+	Update(ID FindOrderInput, orderInput UpdateOrderInput) (Order, error)
 	Delete(ID FindOrderInput) (Order, error)
 }
 
@@ -56,21 +56,24 @@ func (s *service) Save(orderInput SaveOrderInput) (Order, error) {
 	return newOrder, nil
 }
 
-func (s *service) Update(ID FindOrderInput, orderInput SaveOrderInput) (Order, error) {
+func (s *service) Update(ID FindOrderInput, orderInput UpdateOrderInput) (Order, error) {
 	order, err := s.repository.FindByID(ID.ID)
 	if err != nil {
 		return order, err
 	}
 
 	order.CustomerName = orderInput.CustomerName
+
 	orderItems := []Item{}
 	for _, item := range orderInput.Items {
 		orderItem := Item{}
+		orderItem.ID = item.ID
 		orderItem.Code = item.Code
 		orderItem.Description = item.Description
 		orderItem.Qty = item.Quantity
 		orderItems = append(orderItems, orderItem)
 	}
+
 	order.Items = orderItems
 
 	updatedOrder, err := s.repository.Update(order)
