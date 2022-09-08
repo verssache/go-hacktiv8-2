@@ -1,6 +1,10 @@
 package helper
 
-import "github.com/go-playground/validator/v10"
+import (
+	"strings"
+
+	"github.com/go-playground/validator/v10"
+)
 
 type Response struct {
 	Meta Meta        `json:"meta"`
@@ -32,7 +36,8 @@ func FormatValidationError(err error) []string {
 	var errors []string
 
 	for _, e := range err.(validator.ValidationErrors) {
-		errors = append(errors, e.Error())
+		error := strings.Split(e.Error(), "Error:")[1]
+		errors = append(errors, error)
 	}
 
 	return errors
