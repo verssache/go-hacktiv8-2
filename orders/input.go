@@ -17,7 +17,7 @@ type UpdateOrderInput struct {
 }
 
 type UpdateItemInput struct {
-	ID          int    `json:"id" binding:"required"`
+	ID          int    `json:"lineItemId" binding:"required"`
 	Code        string `json:"itemCode" binding:"required"`
 	Description string `json:"description" binding:"required"`
 	Quantity    int    `json:"quantity" binding:"required"`
