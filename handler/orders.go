@@ -38,9 +38,9 @@ func (h *orderHandler) FindAll(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// FindAllByUserID godoc
-// @Summary Show all orders by user id
-// @Description Get all orders by user id
+// FindByUserID godoc
+// @Summary Show orders by user id
+// @Description Get orders by user id
 // @Tags orders
 // @Accept  json
 // @Produce  json
