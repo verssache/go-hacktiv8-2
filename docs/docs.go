@@ -148,7 +148,7 @@ const docTemplate = `{
         },
         "/orders/{user_id}": {
             "get": {
-                "description": "Get all orders by user id",
+                "description": "Get orders by user id",
                 "consumes": [
                     "application/json"
                 ],
@@ -158,7 +158,7 @@ const docTemplate = `{
                 "tags": [
                     "orders"
                 ],
-                "summary": "Show all orders by user id",
+                "summary": "Show orders by user id",
                 "parameters": [
                     {
                         "type": "integer",

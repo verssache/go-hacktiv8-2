@@ -148,7 +148,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get all orders by user id
+      description: Get orders by user id
       parameters:
       - description: User ID
         in: path
@@ -162,7 +162,7 @@ paths:
           description: OK
           schema:
             type: json
-      summary: Show all orders by user id
+      summary: Show orders by user id
       tags:
       - orders
 swagger: "2.0"
