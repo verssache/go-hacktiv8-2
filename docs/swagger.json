@@ -1,0 +1,253 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a sample server for a store.",
+        "title": "Go Hacktiv8 Assignment 2 API Documentation",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Gidhan Bagus Algary",
+            "email": "gidhanbagusalgary@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/orders": {
+            "get": {
+                "description": "Get all orders",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "orders"
+                ],
+                "summary": "Show all orders",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "json"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create new order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "orders"
+                ],
+                "summary": "Create new order",
+                "parameters": [
+                    {
+                        "description": "Order",
+                        "name": "order",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/orders.SaveOrderInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "json"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/{order_id}": {
+            "put": {
+                "description": "Update order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "orders"
+                ],
+                "summary": "Update order",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Order ID",
+                        "name": "order_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Order",
+                        "name": "order",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/orders.UpdateOrderInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "json"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "orders"
+                ],
+                "summary": "Delete order",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Order ID",
+                        "name": "order_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "json"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/{user_id}": {
+            "get": {
+                "description": "Get all orders by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "orders"
+                ],
+                "summary": "Show all orders by user id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "json"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "orders.SaveItemInput": {
+            "type": "object",
+            "required": [
+                "description",
+                "itemCode",
+                "quantity"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "itemCode": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                }
+            }
+        },
+        "orders.SaveOrderInput": {
+            "type": "object",
+            "required": [
+                "customerName"
+            ],
+            "properties": {
+                "customerName": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/orders.SaveItemInput"
+                    }
+                }
+            }
+        },
+        "orders.UpdateItemInput": {
+            "type": "object",
+            "required": [
+                "description",
+                "itemCode",
+                "lineItemId",
+                "quantity"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "itemCode": {
+                    "type": "string"
+                },
+                "lineItemId": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer"
+                }
+            }
+        },
+        "orders.UpdateOrderInput": {
+            "type": "object",
+            "required": [
+                "customerName"
+            ],
+            "properties": {
+                "customerName": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/orders.UpdateItemInput"
+                    }
+                }
+            }
+        }
+    }
+}
