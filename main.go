@@ -20,8 +20,6 @@ import (
 // @host localhost:8080
 // @BasePath /api/v1
 // @version 1.0.0
-// @schemes http
-// @schemes https
 func main() {
 	cfg := config.LoadConfig()
 	db := helper.InitializeDB()
