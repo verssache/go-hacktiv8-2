@@ -76,6 +76,36 @@ const docTemplate = `{
             }
         },
         "/orders/{order_id}": {
+            "get": {
+                "description": "Get orders by user id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "orders"
+                ],
+                "summary": "Show orders by user id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "order_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/helper.Response"
+                        }
+                    }
+                }
+            },
             "put": {
                 "description": "Update order",
                 "consumes": [
@@ -132,38 +162,6 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Order ID",
                         "name": "order_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/helper.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/orders/{user_id}": {
-            "get": {
-                "description": "Get orders by user id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "orders"
-                ],
-                "summary": "Show orders by user id",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "user_id",
                         "in": "path",
                         "required": true
                     }

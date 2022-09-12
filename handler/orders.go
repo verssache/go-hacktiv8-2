@@ -42,9 +42,9 @@ func (h *orderHandler) FindAll(c *gin.Context) {
 // @Tags orders
 // @Accept  json
 // @Produce  json
-// @Param user_id path int true "User ID"
+// @Param order_id path int true "User ID"
 // @Success 200 {object} helper.Response
-// @Router /orders/{user_id} [get]
+// @Router /orders/{order_id} [get]
 func (h *orderHandler) FindByID(c *gin.Context) {
 	var input orders.FindOrderInput
 	err := c.ShouldBindUri(&input)
