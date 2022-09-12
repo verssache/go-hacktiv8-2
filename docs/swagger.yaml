@@ -1,5 +1,20 @@
 basePath: /api/v1
 definitions:
+  helper.Meta:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  helper.Response:
+    properties:
+      data: {}
+      meta:
+        $ref: '#/definitions/helper.Meta'
+    type: object
   orders.SaveItemInput:
     properties:
       description:
@@ -51,7 +66,7 @@ definitions:
     required:
     - customerName
     type: object
-host: localhost:8080
+host: 127.0.0.1:8080
 info:
   contact:
     email: gidhanbagusalgary@gmail.com
@@ -72,7 +87,7 @@ paths:
         "200":
           description: OK
           schema:
-            type: json
+            $ref: '#/definitions/helper.Response'
       summary: Show all orders
       tags:
       - orders
@@ -93,7 +108,7 @@ paths:
         "200":
           description: OK
           schema:
-            type: json
+            $ref: '#/definitions/helper.Response'
       summary: Create new order
       tags:
       - orders
@@ -114,7 +129,7 @@ paths:
         "200":
           description: OK
           schema:
-            type: json
+            $ref: '#/definitions/helper.Response'
       summary: Delete order
       tags:
       - orders
@@ -140,7 +155,7 @@ paths:
         "200":
           description: OK
           schema:
-            type: json
+            $ref: '#/definitions/helper.Response'
       summary: Update order
       tags:
       - orders
@@ -161,8 +176,10 @@ paths:
         "200":
           description: OK
           schema:
-            type: json
+            $ref: '#/definitions/helper.Response'
       summary: Show orders by user id
       tags:
       - orders
+schemes:
+- http
 swagger: "2.0"

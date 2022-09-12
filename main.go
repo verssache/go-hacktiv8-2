@@ -17,9 +17,10 @@ import (
 // @termsOfService http://swagger.io/terms/
 // @contact.name Gidhan Bagus Algary
 // @contact.email gidhanbagusalgary@gmail.com
-// @host localhost:8080
+// @host 127.0.0.1:8080
 // @BasePath /api/v1
 // @version 1.0.0
+// @schemes http
 func main() {
 	cfg := config.LoadConfig()
 	db := helper.InitializeDB()

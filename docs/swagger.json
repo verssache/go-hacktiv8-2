@@ -1,4 +1,7 @@
 {
+    "schemes": [
+        "http"
+    ],
     "swagger": "2.0",
     "info": {
         "description": "This is a sample server for a store.",
@@ -10,7 +13,7 @@
         },
         "version": "1.0.0"
     },
-    "host": "localhost:8080",
+    "host": "127.0.0.1:8080",
     "basePath": "/api/v1",
     "paths": {
         "/orders": {
@@ -30,7 +33,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "json"
+                            "$ref": "#/definitions/helper.Response"
                         }
                     }
                 }
@@ -62,7 +65,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "json"
+                            "$ref": "#/definitions/helper.Response"
                         }
                     }
                 }
@@ -103,7 +106,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "json"
+                            "$ref": "#/definitions/helper.Response"
                         }
                     }
                 }
@@ -133,7 +136,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "json"
+                            "$ref": "#/definitions/helper.Response"
                         }
                     }
                 }
@@ -165,7 +168,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "json"
+                            "$ref": "#/definitions/helper.Response"
                         }
                     }
                 }
@@ -173,6 +176,29 @@
         }
     },
     "definitions": {
+        "helper.Meta": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "helper.Response": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "meta": {
+                    "$ref": "#/definitions/helper.Meta"
+                }
+            }
+        },
         "orders.SaveItemInput": {
             "type": "object",
             "required": [

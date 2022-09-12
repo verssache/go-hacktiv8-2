@@ -16,15 +16,13 @@ func NewHandler(service orders.Service) *orderHandler {
 	return &orderHandler{service}
 }
 
-// @BasePath /api/v1
-
 // FindAll godoc
 // @Summary Show all orders
 // @Description Get all orders
 // @Tags orders
 // @Accept  json
 // @Produce  json
-// @Success 200 {json} helper.APIResponse
+// @Success 200 {object} helper.Response
 // @Router /orders [get]
 func (h *orderHandler) FindAll(c *gin.Context) {
 	findOrders, err := h.service.FindAll()
@@ -45,7 +43,7 @@ func (h *orderHandler) FindAll(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param user_id path int true "User ID"
-// @Success 200 {json} helper.APIResponse
+// @Success 200 {object} helper.Response
 // @Router /orders/{user_id} [get]
 func (h *orderHandler) FindByID(c *gin.Context) {
 	var input orders.FindOrderInput
@@ -76,7 +74,7 @@ func (h *orderHandler) FindByID(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param order body orders.SaveOrderInput true "Order"
-// @Success 200 {json} helper.APIResponse
+// @Success 200 {object} helper.Response
 // @Router /orders [post]
 func (h *orderHandler) Save(c *gin.Context) {
 	var input orders.SaveOrderInput
@@ -109,7 +107,7 @@ func (h *orderHandler) Save(c *gin.Context) {
 // @Produce  json
 // @Param order_id path int true "Order ID"
 // @Param order body orders.UpdateOrderInput true "Order"
-// @Success 200 {json} helper.APIResponse
+// @Success 200 {object} helper.Response
 // @Router /orders/{order_id} [put]
 func (h *orderHandler) Update(c *gin.Context) {
 	var inputID orders.FindOrderInput
@@ -150,7 +148,7 @@ func (h *orderHandler) Update(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param order_id path int true "Order ID"
-// @Success 200 {json} helper.APIResponse
+// @Success 200 {object} helper.Response
 // @Router /orders/{order_id} [delete]
 func (h *orderHandler) Delete(c *gin.Context) {
 	var input orders.FindOrderInput
