@@ -40,7 +40,9 @@ func main() {
 	api.DELETE("/orders/:id", orderHandler.Delete)
 
 	// Tugas 1
-	api.GET("orders/person/:id", orderHandler.FindOrderPerson)
+	api.GET("orders/person/:id", gin.BasicAuth(gin.Accounts{
+		cfg.Auth.Username: cfg.Auth.Password,
+	}), orderHandler.FindOrderPerson)
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	err := router.Run(":" + cfg.ServerPort)

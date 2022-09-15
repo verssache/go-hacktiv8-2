@@ -10,6 +10,7 @@ import (
 type Config struct {
 	ServerPort string
 	Database   Database
+	Auth       Auth
 }
 
 type Database struct {
@@ -18,6 +19,11 @@ type Database struct {
 	DBUser     string
 	DBPassword string
 	DBName     string
+}
+
+type Auth struct {
+	Username string
+	Password string
 }
 
 func LoadConfig() Config {
@@ -33,5 +39,7 @@ func LoadConfig() Config {
 	config.Database.DBUser = os.Getenv("DB_USERNAME")
 	config.Database.DBPassword = os.Getenv("DB_PASSWORD")
 	config.Database.DBName = os.Getenv("DB_DATABASE")
+	config.Auth.Username = os.Getenv("AUTHUSER")
+	config.Auth.Password = os.Getenv("AUTHPASS")
 	return config
 }
