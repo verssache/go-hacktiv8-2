@@ -28,15 +28,15 @@ type OrderPerson struct {
 // Person represents the model for a person
 type Person struct {
 	Status struct {
-		Code        int    `json:"code"`
-		Description string `json:"description"`
-	} `json:"status"`
+		Code        int
+		Description string
+	}
 	Result []struct {
-		Firstname string `json:"firstname"`
-		Lastname  string `json:"lastname"`
-		Username  string `json:"username"`
-		Phone     string `json:"phone"`
-		Email     string `json:"email"`
-		UUID      string `json:"uuid"`
-	} `json:"result"`
+		Firstname string
+		Lastname  string
+		Username  string
+		Phone     string
+		Email     string
+		UUID      string
+	}
 }
