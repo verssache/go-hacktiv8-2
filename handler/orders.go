@@ -173,6 +173,14 @@ func (h *orderHandler) Delete(c *gin.Context) {
 }
 
 // FindOrderPerson godoc
+// @Summary Show order person by order id
+// @Description Get order person by order id
+// @Tags orders
+// @Accept  json
+// @Produce  json
+// @Param order_id path int true "Order ID"
+// @Success 200 {object} helper.Response
+// @Router /orders/person/{order_id} [get]
 func (h *orderHandler) FindOrderPerson(c *gin.Context) {
 	var input orders.FindOrderInput
 	err := c.ShouldBindUri(&input)

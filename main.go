@@ -25,7 +25,7 @@ func main() {
 	cfg := config.LoadConfig()
 	db := helper.InitializeDB()
 
-	orderRepository := orders.NewRepository(db)
+	orderRepository := orders.NewRepository(db, cfg.Host)
 	orderService := orders.NewService(orderRepository)
 	orderHandler := handler.NewHandler(orderService)
 

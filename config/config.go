@@ -11,6 +11,7 @@ type Config struct {
 	ServerPort string
 	Database   Database
 	Auth       Auth
+	Host       string
 }
 
 type Database struct {
@@ -41,5 +42,6 @@ func LoadConfig() Config {
 	config.Database.DBName = os.Getenv("DB_DATABASE")
 	config.Auth.Username = os.Getenv("AUTHUSER")
 	config.Auth.Password = os.Getenv("AUTHPASS")
+	config.Host = os.Getenv("APIHOST")
 	return config
 }

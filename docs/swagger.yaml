@@ -179,6 +179,27 @@ paths:
       summary: Update order
       tags:
       - orders
+  /orders/person/{order_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get order person by order id
+      parameters:
+      - description: Order ID
+        in: path
+        name: order_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helper.Response'
+      summary: Show order person by order id
+      tags:
+      - orders
 schemes:
 - http
 swagger: "2.0"

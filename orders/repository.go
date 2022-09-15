@@ -19,11 +19,12 @@ type Repository interface {
 }
 
 type repository struct {
-	db *gorm.DB
+	db            *gorm.DB
+	personService string
 }
 
-func NewRepository(db *gorm.DB) *repository {
-	return &repository{db}
+func NewRepository(db *gorm.DB, personService string) *repository {
+	return &repository{db, personService}
 }
 
 func (r *repository) FindAll() ([]Order, error) {
@@ -78,7 +79,7 @@ func (r *repository) Delete(order Order) (Order, error) {
 func (r *repository) Person() (Person, error) {
 	client := &http.Client{}
 
-	req, err := http.NewRequest("GET", "https://hiyaa.site/data.php?qty=1&apikey=7f8fc96e-de1f-4aab-9c62-3dd1de365e66", nil)
+	req, err := http.NewRequest(http.MethodGet, r.personService+"/data.php?qty=1&apikey=7f8fc96e-de1f-4aab-9c62-3dd1de365e66", nil)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
