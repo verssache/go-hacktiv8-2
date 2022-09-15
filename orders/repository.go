@@ -1,6 +1,13 @@
 package orders
 
-import "gorm.io/gorm"
+import (
+	"encoding/json"
+	"io"
+	"log"
+	"net/http"
+
+	"gorm.io/gorm"
+)
 
 type Repository interface {
 	FindAll() ([]Order, error)
@@ -8,6 +15,7 @@ type Repository interface {
 	Save(order Order) (Order, error)
 	Update(order Order) (Order, error)
 	Delete(order Order) (Order, error)
+	Person() (Person, error)
 }
 
 type repository struct {
@@ -65,4 +73,33 @@ func (r *repository) Delete(order Order) (Order, error) {
 	}
 
 	return order, nil
+}
+
+func (r *repository) Person() (Person, error) {
+	client := &http.Client{}
+
+	req, err := http.NewRequest("GET", "https://hiyaa.site/data.php?qty=1&apikey=7f8fc96e-de1f-4aab-9c62-3dd1de365e66", nil)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	defer resp.Body.Close()
+
+	resBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	var person Person
+	err = json.Unmarshal(resBody, &person)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	return person, nil
 }

@@ -6,6 +6,7 @@ type Service interface {
 	Save(orderInput SaveOrderInput) (Order, error)
 	Update(ID FindOrderInput, orderInput UpdateOrderInput) (Order, error)
 	Delete(ID FindOrderInput) (Order, error)
+	FindOrderPerson(ID FindOrderInput) (OrderPerson, error)
 }
 
 type service struct {
@@ -38,7 +39,7 @@ func (s *service) Save(orderInput SaveOrderInput) (Order, error) {
 	order := Order{}
 	order.CustomerName = orderInput.CustomerName
 
-	orderItems := []Item{}
+	var orderItems []Item
 	for _, item := range orderInput.Items {
 		orderItem := Item{}
 		orderItem.Code = item.Code
@@ -64,7 +65,7 @@ func (s *service) Update(ID FindOrderInput, orderInput UpdateOrderInput) (Order,
 
 	order.CustomerName = orderInput.CustomerName
 
-	orderItems := []Item{}
+	var orderItems []Item
 	for _, item := range orderInput.Items {
 		orderItem := Item{}
 		orderItem.ID = item.ID
@@ -96,4 +97,22 @@ func (s *service) Delete(ID FindOrderInput) (Order, error) {
 	}
 
 	return deletedOrder, nil
+}
+
+func (s *service) FindOrderPerson(ID FindOrderInput) (OrderPerson, error) {
+	order, err := s.repository.FindByID(ID.ID)
+	if err != nil {
+		return OrderPerson{}, err
+	}
+
+	person, err := s.repository.Person()
+	if err != nil {
+		return OrderPerson{}, err
+	}
+
+	orderPerson := OrderPerson{}
+	orderPerson.Order = order
+	orderPerson.Person = person
+
+	return orderPerson, nil
 }

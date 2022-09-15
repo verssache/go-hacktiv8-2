@@ -171,3 +171,26 @@ func (h *orderHandler) Delete(c *gin.Context) {
 	response := helper.APIResponse("Success to delete order", http.StatusOK, "success", nil)
 	c.JSON(http.StatusOK, response)
 }
+
+// FindOrderPerson godoc
+func (h *orderHandler) FindOrderPerson(c *gin.Context) {
+	var input orders.FindOrderInput
+	err := c.ShouldBindUri(&input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		response := helper.APIResponse("Failed to get detail of order", http.StatusBadRequest, "error", errorMessage)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	findOrder, err := h.service.FindOrderPerson(input)
+	if err != nil {
+		response := helper.APIResponse("Failed to get detail of order", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.APIResponse("Detail of order", http.StatusOK, "success", orders.FormatOrderPerson(findOrder))
+	c.JSON(http.StatusOK, response)
+}
