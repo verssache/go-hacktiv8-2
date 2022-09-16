@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/verssache/go-hacktiv8-2/helper"
 	"github.com/verssache/go-hacktiv8-2/orders"
+	"github.com/verssache/go-hacktiv8-2/users"
 )
 
 type orderHandler struct {
@@ -88,7 +89,10 @@ func (h *orderHandler) Save(c *gin.Context) {
 		return
 	}
 
-	newOrder, err := h.service.Save(input)
+	currentUser := c.MustGet("currentUser").(users.User)
+	userName := currentUser.Name
+
+	newOrder, err := h.service.Save(userName, input)
 	if err != nil {
 		response := helper.APIResponse("Failed to create order", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)

@@ -5,6 +5,7 @@ import (
 
 	"github.com/verssache/go-hacktiv8-2/config"
 	"github.com/verssache/go-hacktiv8-2/orders"
+	"github.com/verssache/go-hacktiv8-2/users"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -18,6 +19,6 @@ func InitializeDB() *gorm.DB {
 		log.Fatal(err.Error())
 	}
 
-	db.AutoMigrate(&orders.Order{}, &orders.Item{})
+	db.AutoMigrate(&orders.Order{}, &orders.Item{}, &users.User{})
 	return db
 }

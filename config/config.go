@@ -12,6 +12,7 @@ type Config struct {
 	Database   Database
 	Auth       Auth
 	Host       string
+	ApiSecret  string
 }
 
 type Database struct {
@@ -43,5 +44,6 @@ func LoadConfig() Config {
 	config.Auth.Username = os.Getenv("AUTHUSER")
 	config.Auth.Password = os.Getenv("AUTHPASS")
 	config.Host = os.Getenv("APIHOST")
+	config.ApiSecret = os.Getenv("API_SECRET")
 	return config
 }

@@ -2,10 +2,12 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/verssache/go-hacktiv8-2/auth"
 	"github.com/verssache/go-hacktiv8-2/config"
 	"github.com/verssache/go-hacktiv8-2/handler"
 	"github.com/verssache/go-hacktiv8-2/helper"
 	"github.com/verssache/go-hacktiv8-2/orders"
+	"github.com/verssache/go-hacktiv8-2/users"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -25,9 +27,14 @@ func main() {
 	cfg := config.LoadConfig()
 	db := helper.InitializeDB()
 
+	authService := auth.NewService()
+
 	orderRepository := orders.NewRepository(db, cfg.Host)
+	userRepository := users.NewRepository(db)
 	orderService := orders.NewService(orderRepository)
+	userService := users.NewService(userRepository)
 	orderHandler := handler.NewHandler(orderService)
+	userHandler := handler.NewUserHandler(userService, authService)
 
 	router := gin.Default()
 	docs.SwaggerInfo.BasePath = "/api/v1"
@@ -35,14 +42,16 @@ func main() {
 
 	api.GET("/orders", orderHandler.FindAll)
 	api.GET("/orders/:id", orderHandler.FindByID)
-	api.POST("/orders", orderHandler.Save)
+	api.POST("/orders", authService.AuthMiddleware(authService, userService), orderHandler.Save)
 	api.PUT("/orders/:id", orderHandler.Update)
 	api.DELETE("/orders/:id", orderHandler.Delete)
 
-	// Tugas 1
 	api.GET("orders/person/:id", gin.BasicAuth(gin.Accounts{
 		cfg.Auth.Username: cfg.Auth.Password,
 	}), orderHandler.FindOrderPerson)
+
+	api.POST("/register", userHandler.RegisterUser)
+	api.POST("/login", userHandler.LoginUser)
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	err := router.Run(":" + cfg.ServerPort)

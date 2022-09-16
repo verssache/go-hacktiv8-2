@@ -3,7 +3,7 @@ package orders
 type Service interface {
 	FindAll() ([]Order, error)
 	FindByID(ID FindOrderInput) (Order, error)
-	Save(orderInput SaveOrderInput) (Order, error)
+	Save(customerName string, orderInput SaveOrderInput) (Order, error)
 	Update(ID FindOrderInput, orderInput UpdateOrderInput) (Order, error)
 	Delete(ID FindOrderInput) (Order, error)
 	FindOrderPerson(ID FindOrderInput) (OrderPerson, error)
@@ -35,9 +35,9 @@ func (s *service) FindByID(ID FindOrderInput) (Order, error) {
 	return order, nil
 }
 
-func (s *service) Save(orderInput SaveOrderInput) (Order, error) {
+func (s *service) Save(customerName string, orderInput SaveOrderInput) (Order, error) {
 	order := Order{}
-	order.CustomerName = orderInput.CustomerName
+	order.CustomerName = customerName
 
 	var orderItems []Item
 	for _, item := range orderInput.Items {
