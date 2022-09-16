@@ -19,6 +19,16 @@ func NewUserHandler(userService users.Service, authService auth.Service) *userHa
 	return &userHandler{userService, authService}
 }
 
+// Register godoc
+// @Summary Register new user
+// @Description Register new user
+// @Tags user
+// @Accept  json
+// @Produce  json
+// @Param user body users.RegisterUserInput true "User"
+// @Success 200 {object} helper.Response
+// @Failure 400 {object} helper.Response
+// @Router /register [post]
 func (h *userHandler) RegisterUser(c *gin.Context) {
 	var input users.RegisterUserInput
 
@@ -44,6 +54,16 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+// Login godoc
+// @Summary Login user
+// @Description Login user
+// @Tags user
+// @Accept  json
+// @Produce  json
+// @Param user body users.LoginUserInput true "User"
+// @Success 200 {object} helper.Response
+// @Failure 400 {object} helper.Response
+// @Router /login [post]
 func (h *userHandler) LoginUser(c *gin.Context) {
 	var input users.LoginUserInput
 

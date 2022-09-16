@@ -58,6 +58,29 @@ definitions:
           $ref: '#/definitions/orders.UpdateItemInput'
         type: array
     type: object
+  users.LoginUserInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  users.RegisterUserInput:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
 host: 127.0.0.1:8080
 info:
   contact:
@@ -68,6 +91,32 @@ info:
   title: Go Hacktiv8 Assignment 2 API Documentation
   version: 1.0.0
 paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Login user
+      parameters:
+      - description: User
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/users.LoginUserInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helper.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.Response'
+      summary: Login user
+      tags:
+      - user
   /orders:
     get:
       consumes:
@@ -192,6 +241,32 @@ paths:
       summary: Show order person by order id
       tags:
       - orders
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Register new user
+      parameters:
+      - description: User
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/users.RegisterUserInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/helper.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helper.Response'
+      summary: Register new user
+      tags:
+      - user
 schemes:
 - http
 swagger: "2.0"
