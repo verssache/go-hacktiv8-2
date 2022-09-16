@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -107,6 +108,7 @@ func (h *userHandler) Logout(c *gin.Context) {
 	}
 
 	findUser := h.authService.FindAuth(au)
+	log.Println(findUser)
 	if findUser {
 		err = h.authService.DeleteAuth(au)
 		if err != nil {
@@ -114,6 +116,10 @@ func (h *userHandler) Logout(c *gin.Context) {
 			c.JSON(http.StatusUnauthorized, response)
 			return
 		}
+	} else {
+		response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+		c.JSON(http.StatusUnauthorized, response)
+		return
 	}
 
 	response := helper.APIResponse("Successfuly logged out", http.StatusOK, "success", nil)

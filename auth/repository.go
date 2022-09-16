@@ -31,12 +31,16 @@ func NewRepository(db *gorm.DB) *repository {
 func (r *repository) FindAuth(authD *AuthDetails) bool {
 	au := &Auth{}
 	err := r.db.Where("user_id = ? AND auth_uuid = ?", authD.UserID, authD.AuthUUID).Find(&au).Error
+	if au.AuthUUID == "" {
+		return false
+	}
+
 	return err == nil
 }
 
 func (r *repository) FetchAuth(authD *AuthDetails) (*Auth, error) {
 	au := &Auth{}
-	err := r.db.Where("user_id = ? AND auth_uuid = ?", authD.UserID, authD.AuthUUID).Take(&au).Error
+	err := r.db.Where("user_id = ? AND auth_uuid = ?", authD.UserID, authD.AuthUUID).Find(&au).Error
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +49,7 @@ func (r *repository) FetchAuth(authD *AuthDetails) (*Auth, error) {
 
 func (r *repository) DeleteAuth(authD *AuthDetails) error {
 	au := &Auth{}
-	err := r.db.Where("user_id = ? AND auth_uuid = ?", authD.UserID, authD.AuthUUID).Take(&au).Delete(&au).Error
+	err := r.db.Where("user_id = ? AND auth_uuid = ?", authD.UserID, authD.AuthUUID).Find(&au).Delete(&au).Error
 	if err != nil {
 		return err
 	}
