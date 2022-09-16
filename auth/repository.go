@@ -12,9 +12,9 @@ type Auth struct {
 }
 
 type Repository interface {
-	FindAuth(authD *AuthDetails) (*Auth, error)
-	FetchAuth(authD *Auth) (*Auth, error)
-	DeleteAuth(authD *Auth) error
+	FindAuth(authD *AuthDetails) bool
+	FetchAuth(authD *AuthDetails) (*Auth, error)
+	DeleteAuth(authD *AuthDetails) error
 	CreateAuth(uint64) (*Auth, error)
 	FindAuthUser(userID int) bool
 	DeleteAuthUser(userID int) error
@@ -28,25 +28,24 @@ func NewRepository(db *gorm.DB) *repository {
 	return &repository{db}
 }
 
-func (r *repository) FindAuth(authD *AuthDetails) (*Auth, error) {
+func (r *repository) FindAuth(authD *AuthDetails) bool {
 	au := &Auth{}
 	err := r.db.Where("user_id = ? AND auth_uuid = ?", authD.UserID, authD.AuthUUID).Find(&au).Error
+	return err == nil
+}
+
+func (r *repository) FetchAuth(authD *AuthDetails) (*Auth, error) {
+	au := &Auth{}
+	err := r.db.Where("user_id = ? AND auth_uuid = ?", authD.UserID, authD.AuthUUID).Take(&au).Error
 	if err != nil {
 		return nil, err
 	}
 	return au, nil
 }
 
-func (r *repository) FetchAuth(authD *Auth) (*Auth, error) {
-	err := r.db.Take(&authD).Error
-	if err != nil {
-		return nil, err
-	}
-	return authD, nil
-}
-
-func (r *repository) DeleteAuth(authD *Auth) error {
-	err := r.db.Delete(&authD).Error
+func (r *repository) DeleteAuth(authD *AuthDetails) error {
+	au := &Auth{}
+	err := r.db.Where("user_id = ? AND auth_uuid = ?", authD.UserID, authD.AuthUUID).Take(&au).Delete(&au).Error
 	if err != nil {
 		return err
 	}

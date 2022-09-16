@@ -106,11 +106,14 @@ func (h *userHandler) Logout(c *gin.Context) {
 		return
 	}
 
-	deleted, delErr := h.authService.DeleteAuth(*au)
-	if delErr != nil || !deleted {
-		response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
-		c.JSON(http.StatusUnauthorized, response)
-		return
+	findUser := h.authService.FindAuth(au)
+	if findUser {
+		err = h.authService.DeleteAuth(au)
+		if err != nil {
+			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+			c.JSON(http.StatusUnauthorized, response)
+			return
+		}
 	}
 
 	response := helper.APIResponse("Successfuly logged out", http.StatusOK, "success", nil)

@@ -7,8 +7,9 @@ import (
 )
 
 type Service interface {
-	FetchAuth(AuthDetails) (*Auth, error)
-	DeleteAuth(AuthDetails) (bool, error)
+	FindAuth(authD *AuthDetails) bool
+	FetchAuth(*AuthDetails) (*Auth, error)
+	DeleteAuth(*AuthDetails) error
 	CreateAuth(uint64) (*Auth, error)
 	Login(AuthDetails) (string, error)
 	AuthMiddleware() gin.HandlerFunc
@@ -24,43 +25,31 @@ func NewService(repository Repository) *service {
 	return &service{repository}
 }
 
-func (s *service) FetchAuth(authD AuthDetails) (*Auth, error) {
+func (s *service) FindAuth(authD *AuthDetails) bool {
+	err := s.repository.FindAuth(authD)
+	if err {
+		return true
+	} else {
+		return false
+	}
+}
 
-	auths, err := s.repository.FindAuth(&authD)
+func (s *service) FetchAuth(authD *AuthDetails) (*Auth, error) {
+	au, err := s.repository.FetchAuth(authD)
 	if err != nil {
 		return nil, err
 	}
 
-	if auths == nil {
-		return nil, err
-	} else {
-		au, err := s.repository.FetchAuth(auths)
-		if err != nil {
-			return nil, err
-		}
-
-		return au, nil
-	}
+	return au, nil
 
 }
 
-func (s *service) DeleteAuth(authD AuthDetails) (bool, error) {
-
-	auths, err := s.repository.FindAuth(&authD)
+func (s *service) DeleteAuth(authD *AuthDetails) error {
+	err := s.repository.DeleteAuth(authD)
 	if err != nil {
-		return false, err
+		return err
 	}
-
-	if auths == nil {
-		return false, nil
-	} else {
-		err = s.repository.DeleteAuth(auths)
-		if err != nil {
-			return false, err
-		}
-	}
-
-	return true, nil
+	return nil
 }
 
 func (s *service) CreateAuth(userID uint64) (*Auth, error) {

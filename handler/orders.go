@@ -105,7 +105,7 @@ func (h *orderHandler) Save(c *gin.Context) {
 		return
 	}
 
-	foundAuth, err := h.authService.FetchAuth(*tokenAuth)
+	foundAuth, err := h.authService.FetchAuth(tokenAuth)
 	if err != nil {
 		response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
 		c.JSON(http.StatusUnauthorized, response)
@@ -172,7 +172,7 @@ func (h *orderHandler) Update(c *gin.Context) {
 		return
 	}
 
-	foundAuth, err := h.authService.FetchAuth(*tokenAuth)
+	foundAuth, err := h.authService.FetchAuth(tokenAuth)
 	if err != nil {
 		response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
 		c.JSON(http.StatusUnauthorized, response)
@@ -228,7 +228,7 @@ func (h *orderHandler) Delete(c *gin.Context) {
 		return
 	}
 
-	foundAuth, err := h.authService.FetchAuth(*tokenAuth)
+	foundAuth, err := h.authService.FetchAuth(tokenAuth)
 	if err != nil {
 		response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
 		c.JSON(http.StatusUnauthorized, response)
