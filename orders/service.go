@@ -74,6 +74,11 @@ func (s *service) Update(ID FindOrderInput, orderInput UpdateOrderInput, custome
 	var orderItems []Item
 	for _, item := range orderInput.Items {
 		orderItem := Item{}
+		for i := 0; i < len(order.Items); i++ {
+			if order.Items[i].ID != item.ID {
+				return order, errors.New("unauthorized")
+			}
+		}
 		orderItem.ID = item.ID
 		orderItem.Code = item.Code
 		orderItem.Description = item.Description

@@ -64,6 +64,12 @@ func (h *orderHandler) FindByID(c *gin.Context) {
 		return
 	}
 
+	if findOrder.ID == 0 {
+		response := helper.APIResponse("Order not found", http.StatusNotFound, "error", nil)
+		c.JSON(http.StatusNotFound, response)
+		return
+	}
+
 	response := helper.APIResponse("Detail of order", http.StatusOK, "success", orders.FormatOrder(findOrder))
 	c.JSON(http.StatusOK, response)
 }
@@ -139,7 +145,7 @@ func (h *orderHandler) Update(c *gin.Context) {
 
 	updatedOrder, err := h.service.Update(inputID, inputData, userName)
 	if err != nil {
-		response := helper.APIResponse("Failed to update order", http.StatusBadRequest, "error", nil)
+		response := helper.APIResponse("Failed to update order", http.StatusBadRequest, "error", err.Error())
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}

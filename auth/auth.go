@@ -16,7 +16,7 @@ import (
 type Service interface {
 	GenerateToken(userID int) (string, error)
 	ValidateToken(encodedToken string) (*jwt.Token, error)
-	AuthMiddleware(authService Service, userService users.Service) gin.HandlerFunc
+	AuthMiddleware(userService users.Service) gin.HandlerFunc
 }
 
 type jwtService struct {
@@ -66,7 +66,7 @@ func (s *jwtService) ValidateToken(encodedToken string) (*jwt.Token, error) {
 	return token, nil
 }
 
-func (s *jwtService) AuthMiddleware(authService Service, userService users.Service) gin.HandlerFunc {
+func (s *jwtService) AuthMiddleware(userService users.Service) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
@@ -83,7 +83,7 @@ func (s *jwtService) AuthMiddleware(authService Service, userService users.Servi
 			tokenString = arrayToken[1]
 		}
 
-		token, err := authService.ValidateToken(tokenString)
+		token, err := s.ValidateToken(tokenString)
 		if err != nil {
 			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
