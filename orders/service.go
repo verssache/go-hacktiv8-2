@@ -1,11 +1,13 @@
 package orders
 
+import "errors"
+
 type Service interface {
 	FindAll() ([]Order, error)
 	FindByID(ID FindOrderInput) (Order, error)
 	Save(customerName string, orderInput SaveOrderInput) (Order, error)
-	Update(ID FindOrderInput, orderInput UpdateOrderInput) (Order, error)
-	Delete(ID FindOrderInput) (Order, error)
+	Update(ID FindOrderInput, orderInput UpdateOrderInput, customerName string) (Order, error)
+	Delete(ID FindOrderInput, customerName string) (Order, error)
 	FindOrderPerson(ID FindOrderInput) (OrderPerson, error)
 }
 
@@ -57,13 +59,17 @@ func (s *service) Save(customerName string, orderInput SaveOrderInput) (Order, e
 	return newOrder, nil
 }
 
-func (s *service) Update(ID FindOrderInput, orderInput UpdateOrderInput) (Order, error) {
+func (s *service) Update(ID FindOrderInput, orderInput UpdateOrderInput, customerName string) (Order, error) {
 	order, err := s.repository.FindByID(ID.ID)
 	if err != nil {
 		return order, err
 	}
 
-	order.CustomerName = orderInput.CustomerName
+	if order.CustomerName != customerName {
+		return order, errors.New("unauthorized")
+	}
+
+	order.CustomerName = customerName
 
 	var orderItems []Item
 	for _, item := range orderInput.Items {
@@ -85,10 +91,14 @@ func (s *service) Update(ID FindOrderInput, orderInput UpdateOrderInput) (Order,
 	return updatedOrder, nil
 }
 
-func (s *service) Delete(ID FindOrderInput) (Order, error) {
+func (s *service) Delete(ID FindOrderInput, customerName string) (Order, error) {
 	order, err := s.repository.FindByID(ID.ID)
 	if err != nil {
 		return order, err
+	}
+
+	if order.CustomerName != customerName {
+		return order, errors.New("unauthorized")
 	}
 
 	deletedOrder, err := s.repository.Delete(order)

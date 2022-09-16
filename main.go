@@ -43,8 +43,8 @@ func main() {
 	api.GET("/orders", orderHandler.FindAll)
 	api.GET("/orders/:id", orderHandler.FindByID)
 	api.POST("/orders", authService.AuthMiddleware(authService, userService), orderHandler.Save)
-	api.PUT("/orders/:id", orderHandler.Update)
-	api.DELETE("/orders/:id", orderHandler.Delete)
+	api.PUT("/orders/:id", authService.AuthMiddleware(authService, userService), orderHandler.Update)
+	api.DELETE("/orders/:id", authService.AuthMiddleware(authService, userService), orderHandler.Delete)
 
 	api.GET("orders/person/:id", gin.BasicAuth(gin.Accounts{
 		cfg.Auth.Username: cfg.Auth.Password,

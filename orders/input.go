@@ -1,8 +1,7 @@
 package orders
 
 type SaveOrderInput struct {
-	CustomerName string          `json:"customerName" binding:"required"`
-	Items        []SaveItemInput `json:"items" binding:"dive"`
+	Items []SaveItemInput `json:"items" binding:"dive"`
 }
 
 type SaveItemInput struct {
@@ -12,8 +11,7 @@ type SaveItemInput struct {
 }
 
 type UpdateOrderInput struct {
-	CustomerName string            `json:"customerName" binding:"required"`
-	Items        []UpdateItemInput `json:"items" binding:"dive"`
+	Items []UpdateItemInput `json:"items" binding:"dive"`
 }
 
 type UpdateItemInput struct {

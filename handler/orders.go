@@ -134,7 +134,10 @@ func (h *orderHandler) Update(c *gin.Context) {
 		return
 	}
 
-	updatedOrder, err := h.service.Update(inputID, inputData)
+	currentUser := c.MustGet("currentUser").(users.User)
+	userName := currentUser.Name
+
+	updatedOrder, err := h.service.Update(inputID, inputData, userName)
 	if err != nil {
 		response := helper.APIResponse("Failed to update order", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)
@@ -165,7 +168,10 @@ func (h *orderHandler) Delete(c *gin.Context) {
 		return
 	}
 
-	_, err = h.service.Delete(input)
+	currentUser := c.MustGet("currentUser").(users.User)
+	userName := currentUser.Name
+
+	_, err = h.service.Delete(input, userName)
 	if err != nil {
 		response := helper.APIResponse("Failed to delete order", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)
