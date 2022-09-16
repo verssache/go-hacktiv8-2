@@ -30,14 +30,10 @@ definitions:
     type: object
   orders.SaveOrderInput:
     properties:
-      customerName:
-        type: string
       items:
         items:
           $ref: '#/definitions/orders.SaveItemInput'
         type: array
-    required:
-    - customerName
     type: object
   orders.UpdateItemInput:
     properties:
@@ -57,14 +53,10 @@ definitions:
     type: object
   orders.UpdateOrderInput:
     properties:
-      customerName:
-        type: string
       items:
         items:
           $ref: '#/definitions/orders.UpdateItemInput'
         type: array
-    required:
-    - customerName
     type: object
 host: 127.0.0.1:8080
 info:

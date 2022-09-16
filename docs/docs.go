@@ -254,13 +254,7 @@ const docTemplate = `{
         },
         "orders.SaveOrderInput": {
             "type": "object",
-            "required": [
-                "customerName"
-            ],
             "properties": {
-                "customerName": {
-                    "type": "string"
-                },
                 "items": {
                     "type": "array",
                     "items": {
@@ -294,13 +288,7 @@ const docTemplate = `{
         },
         "orders.UpdateOrderInput": {
             "type": "object",
-            "required": [
-                "customerName"
-            ],
             "properties": {
-                "customerName": {
-                    "type": "string"
-                },
                 "items": {
                     "type": "array",
                     "items": {
