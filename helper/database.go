@@ -3,6 +3,7 @@ package helper
 import (
 	"log"
 
+	"github.com/verssache/go-hacktiv8-2/auth"
 	"github.com/verssache/go-hacktiv8-2/config"
 	"github.com/verssache/go-hacktiv8-2/orders"
 	"github.com/verssache/go-hacktiv8-2/users"
@@ -19,6 +20,6 @@ func InitializeDB() *gorm.DB {
 		log.Fatal(err.Error())
 	}
 
-	db.AutoMigrate(&orders.Order{}, &orders.Item{}, &users.User{})
+	db.AutoMigrate(&orders.Order{}, &orders.Item{}, &users.User{}, &auth.Auth{})
 	return db
 }

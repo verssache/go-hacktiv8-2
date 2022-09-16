@@ -2,46 +2,31 @@ package auth
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
+	"os"
+	"strconv"
 	"strings"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/verssache/go-hacktiv8-2/config"
-	"github.com/verssache/go-hacktiv8-2/helper"
-	"github.com/verssache/go-hacktiv8-2/users"
 )
 
-type Service interface {
-	GenerateToken(userID int) (string, error)
-	ValidateToken(encodedToken string) (*jwt.Token, error)
-	AuthMiddleware() gin.HandlerFunc
-}
-
-type jwtService struct {
-	userService users.Service
-}
-
-func NewService(userService users.Service) *jwtService {
-	return &jwtService{userService}
-}
-
-type MyClaims struct {
-	UserID int `json:"user_id"`
-	jwt.RegisteredClaims
+type AuthDetails struct {
+	AuthUUID string
+	UserID   uint64
 }
 
 var cfg = config.LoadConfig()
 var SECRET_KEY = []byte(cfg.ApiSecret)
 
-func (s *jwtService) GenerateToken(userID int) (string, error) {
-	claim := MyClaims{}
-	claim.UserID = userID
-	claim.RegisteredClaims = jwt.RegisteredClaims{
-		Issuer:    "gidhan",
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(7 * 24 * time.Hour)),
-	}
+func CreateToken(authD AuthDetails) (string, error) {
+	claim := jwt.MapClaims{}
+	claim["authorized"] = true
+	claim["auth_uuid"] = authD.AuthUUID
+	claim["user_id"] = authD.UserID
+	claim["exp"] = time.Now().Add(time.Hour * 1).Unix()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 	signedToken, err := token.SignedString(SECRET_KEY)
@@ -52,63 +37,64 @@ func (s *jwtService) GenerateToken(userID int) (string, error) {
 	return signedToken, nil
 }
 
-func (s *jwtService) ValidateToken(encodedToken string) (*jwt.Token, error) {
-	token, err := jwt.Parse(encodedToken, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("invalid token")
-		}
-		return []byte(SECRET_KEY), nil
-	})
-
+func TokenValid(r *http.Request) error {
+	token, err := VerifyToken(r)
 	if err != nil {
-		return token, err
+		return err
 	}
+	if _, ok := token.Claims.(jwt.MapClaims); !ok && !token.Valid {
+		return err
+	}
+	return nil
+}
 
+func VerifyToken(r *http.Request) (*jwt.Token, error) {
+	tokenString := ExtractToken(r)
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("unexpected signing method")
+		}
+		return []byte(os.Getenv("API_SECRET")), nil
+	})
+	if err != nil {
+		return nil, err
+	}
 	return token, nil
 }
 
-func (s *jwtService) AuthMiddleware() gin.HandlerFunc {
-
-	return func(c *gin.Context) {
-		authHeader := c.GetHeader("Authorization")
-
-		if !strings.Contains(authHeader, "Bearer") {
-			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
-			return
-		}
-
-		tokenString := ""
-		arrayToken := strings.Split(authHeader, " ")
-		if len(arrayToken) == 2 {
-			tokenString = arrayToken[1]
-		}
-
-		token, err := s.ValidateToken(tokenString)
-		if err != nil {
-			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
-			return
-		}
-
-		claim, ok := token.Claims.(jwt.MapClaims)
-		if !ok || !token.Valid {
-			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
-			return
-		}
-
-		userID := int(claim["user_id"].(float64))
-
-		user, err := s.userService.GetUserById(userID)
-		if err != nil {
-			response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
-			return
-		}
-
-		c.Set("currentUser", user)
-
+func ExtractToken(r *http.Request) string {
+	keys := r.URL.Query()
+	token := keys.Get("token")
+	if token != "" {
+		return token
 	}
+	bearToken := r.Header.Get("Authorization")
+	strArr := strings.Split(bearToken, " ")
+	if len(strArr) == 2 {
+		return strArr[1]
+	}
+	return ""
+}
 
+func ExtractTokenAuth(r *http.Request) (*AuthDetails, error) {
+	token, err := VerifyToken(r)
+	if err != nil {
+		return nil, err
+	}
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if ok && token.Valid {
+		authUuid, ok := claims["auth_uuid"].(string)
+		if !ok {
+			return nil, err
+		}
+		userId, err := strconv.ParseUint(fmt.Sprintf("%.f", claims["user_id"]), 10, 64)
+		if err != nil {
+			return nil, err
+		}
+		return &AuthDetails{
+			AuthUUID: authUuid,
+			UserID:   userId,
+		}, nil
+	}
+	return nil, err
 }

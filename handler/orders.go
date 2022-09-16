@@ -4,17 +4,20 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/verssache/go-hacktiv8-2/auth"
 	"github.com/verssache/go-hacktiv8-2/helper"
 	"github.com/verssache/go-hacktiv8-2/orders"
 	"github.com/verssache/go-hacktiv8-2/users"
 )
 
 type orderHandler struct {
-	service orders.Service
+	service     orders.Service
+	authService auth.Service
+	userService users.Service
 }
 
-func NewHandler(service orders.Service) *orderHandler {
-	return &orderHandler{service}
+func NewHandler(service orders.Service, authService auth.Service, userService users.Service) *orderHandler {
+	return &orderHandler{service, authService, userService}
 }
 
 // FindAll godoc
@@ -95,8 +98,30 @@ func (h *orderHandler) Save(c *gin.Context) {
 		return
 	}
 
-	currentUser := c.MustGet("currentUser").(users.User)
-	userName := currentUser.Name
+	tokenAuth, err := auth.ExtractTokenAuth(c.Request)
+	if err != nil {
+		response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+		c.JSON(http.StatusUnauthorized, response)
+		return
+	}
+
+	foundAuth, err := h.authService.FetchAuth(*tokenAuth)
+	if err != nil {
+		response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+		c.JSON(http.StatusUnauthorized, response)
+		return
+	}
+
+	userID := foundAuth.UserID
+
+	user, err := h.userService.GetUserById(int(userID))
+	if err != nil {
+		response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+		c.JSON(http.StatusUnauthorized, response)
+		return
+	}
+
+	userName := user.Name
 
 	newOrder, err := h.service.Save(userName, input)
 	if err != nil {
@@ -140,8 +165,30 @@ func (h *orderHandler) Update(c *gin.Context) {
 		return
 	}
 
-	currentUser := c.MustGet("currentUser").(users.User)
-	userName := currentUser.Name
+	tokenAuth, err := auth.ExtractTokenAuth(c.Request)
+	if err != nil {
+		response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+		c.JSON(http.StatusUnauthorized, response)
+		return
+	}
+
+	foundAuth, err := h.authService.FetchAuth(*tokenAuth)
+	if err != nil {
+		response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+		c.JSON(http.StatusUnauthorized, response)
+		return
+	}
+
+	userID := foundAuth.UserID
+
+	user, err := h.userService.GetUserById(int(userID))
+	if err != nil {
+		response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+		c.JSON(http.StatusUnauthorized, response)
+		return
+	}
+
+	userName := user.Name
 
 	updatedOrder, err := h.service.Update(inputID, inputData, userName)
 	if err != nil {
@@ -174,8 +221,30 @@ func (h *orderHandler) Delete(c *gin.Context) {
 		return
 	}
 
-	currentUser := c.MustGet("currentUser").(users.User)
-	userName := currentUser.Name
+	tokenAuth, err := auth.ExtractTokenAuth(c.Request)
+	if err != nil {
+		response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+		c.JSON(http.StatusUnauthorized, response)
+		return
+	}
+
+	foundAuth, err := h.authService.FetchAuth(*tokenAuth)
+	if err != nil {
+		response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+		c.JSON(http.StatusUnauthorized, response)
+		return
+	}
+
+	userID := foundAuth.UserID
+
+	user, err := h.userService.GetUserById(int(userID))
+	if err != nil {
+		response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+		c.JSON(http.StatusUnauthorized, response)
+		return
+	}
+
+	userName := user.Name
 
 	_, err = h.service.Delete(input, userName)
 	if err != nil {

@@ -38,14 +38,7 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 		return
 	}
 
-	token, err := h.authService.GenerateToken(newUser.ID)
-	if err != nil {
-		response := helper.APIResponse("Register account failed", http.StatusBadRequest, "error", nil)
-		c.JSON(http.StatusBadRequest, response)
-		return
-	}
-
-	formatter := users.FormatUser(newUser, token)
+	formatter := users.FormatRegister(newUser)
 	response := helper.APIResponse("Account has been registered", http.StatusOK, "success", formatter)
 	c.JSON(http.StatusOK, response)
 }
@@ -70,7 +63,30 @@ func (h *userHandler) LoginUser(c *gin.Context) {
 		return
 	}
 
-	token, err := h.authService.GenerateToken(loggedInUser.ID)
+	findUser := h.authService.FindAuthUser(loggedInUser.ID)
+	if findUser {
+		err = h.authService.DeleteAuthUser(loggedInUser.ID)
+		if err != nil {
+			errorMessage := gin.H{"errors": err.Error()}
+			response := helper.APIResponse("Login failed", http.StatusBadRequest, "error", errorMessage)
+			c.JSON(http.StatusBadRequest, response)
+			return
+		}
+	}
+
+	authData, err := h.authService.CreateAuth(uint64(loggedInUser.ID))
+	if err != nil {
+		errorMessage := gin.H{"errors": err.Error()}
+		response := helper.APIResponse("Login failed", http.StatusBadRequest, "error", errorMessage)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	authD := auth.AuthDetails{}
+	authD.UserID = authData.UserID
+	authD.AuthUUID = authData.AuthUUID
+
+	token, err := h.authService.Login(authD)
 	if err != nil {
 		response := helper.APIResponse("Login failed", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)
@@ -79,5 +95,24 @@ func (h *userHandler) LoginUser(c *gin.Context) {
 
 	formatter := users.FormatUser(loggedInUser, token)
 	response := helper.APIResponse("Successfuly logged in", http.StatusOK, "success", formatter)
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *userHandler) Logout(c *gin.Context) {
+	au, err := auth.ExtractTokenAuth(c.Request)
+	if err != nil {
+		response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+		c.JSON(http.StatusUnauthorized, response)
+		return
+	}
+
+	deleted, delErr := h.authService.DeleteAuth(*au)
+	if delErr != nil || !deleted {
+		response := helper.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
+		c.JSON(http.StatusUnauthorized, response)
+		return
+	}
+
+	response := helper.APIResponse("Successfuly logged out", http.StatusOK, "success", nil)
 	c.JSON(http.StatusOK, response)
 }

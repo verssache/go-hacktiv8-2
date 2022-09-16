@@ -31,8 +31,9 @@ func main() {
 	userRepository := users.NewRepository(db)
 	orderService := orders.NewService(orderRepository)
 	userService := users.NewService(userRepository)
-	authService := auth.NewService(userService)
-	orderHandler := handler.NewHandler(orderService)
+	authRepository := auth.NewRepository(db)
+	authService := auth.NewService(authRepository)
+	orderHandler := handler.NewHandler(orderService, authService, userService)
 	userHandler := handler.NewUserHandler(userService, authService)
 
 	router := gin.Default()
@@ -51,6 +52,7 @@ func main() {
 
 	api.POST("/register", userHandler.RegisterUser)
 	api.POST("/login", userHandler.LoginUser)
+	api.POST("/logout", userHandler.Logout)
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	err := router.Run(":" + cfg.ServerPort)
