@@ -68,11 +68,17 @@ func ExtractToken(r *http.Request) string {
 	if token != "" {
 		return token
 	}
+
 	bearToken := r.Header.Get("Authorization")
-	strArr := strings.Split(bearToken, " ")
-	if len(strArr) == 2 {
-		return strArr[1]
+	bearer := strings.HasPrefix(bearToken, "Bearer")
+	if bearer {
+		strArr := strings.Split(bearToken, " ")
+		if len(strArr) == 2 {
+			return strArr[1]
+		}
+		return ""
 	}
+
 	return ""
 }
 
