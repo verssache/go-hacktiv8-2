@@ -33,9 +33,9 @@ func main() {
 	orderService := orders.NewService(orderRepository)
 	userService := users.NewService(userRepository)
 	authService := auth.NewService(authRepository)
-	authHandler := handler.NewAuthHandler(authService)
 	orderHandler := handler.NewHandler(orderService, authService, userService)
 	userHandler := handler.NewUserHandler(userService, authService)
+	authHandler := handler.NewAuthHandler(authService)
 
 	router := gin.Default()
 	docs.SwaggerInfo.BasePath = "/api/v1"
