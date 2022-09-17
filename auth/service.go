@@ -1,18 +1,11 @@
 package auth
 
-import (
-	"net/http"
-
-	"github.com/gin-gonic/gin"
-)
-
 type Service interface {
 	FindAuth(authD *AuthDetails) bool
 	FetchAuth(*AuthDetails) (*Auth, error)
 	DeleteAuth(*AuthDetails) error
 	CreateAuth(uint64) (*Auth, error)
 	Login(AuthDetails) (string, error)
-	AuthMiddleware() gin.HandlerFunc
 	FindAuthUser(userID int) bool
 	DeleteAuthUser(userID int) error
 }
@@ -66,18 +59,6 @@ func (s *service) Login(authD AuthDetails) (string, error) {
 		return "", err
 	}
 	return token, nil
-}
-
-func (s *service) AuthMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		err := TokenValid(c.Request)
-		if err != nil {
-			c.JSON(http.StatusUnauthorized, "You need to be authorized to access this route")
-			c.Abort()
-			return
-		}
-		c.Next()
-	}
 }
 
 func (s *service) FindAuthUser(userID int) bool {

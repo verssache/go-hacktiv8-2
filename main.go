@@ -29,10 +29,11 @@ func main() {
 
 	orderRepository := orders.NewRepository(db, cfg.Host)
 	userRepository := users.NewRepository(db)
+	authRepository := auth.NewRepository(db)
 	orderService := orders.NewService(orderRepository)
 	userService := users.NewService(userRepository)
-	authRepository := auth.NewRepository(db)
 	authService := auth.NewService(authRepository)
+	authHandler := handler.NewAuthHandler(authService)
 	orderHandler := handler.NewHandler(orderService, authService, userService)
 	userHandler := handler.NewUserHandler(userService, authService)
 
@@ -42,9 +43,9 @@ func main() {
 
 	api.GET("/orders", orderHandler.FindAll)
 	api.GET("/orders/:id", orderHandler.FindByID)
-	api.POST("/orders", authService.AuthMiddleware(), orderHandler.Save)
-	api.PUT("/orders/:id", authService.AuthMiddleware(), orderHandler.Update)
-	api.DELETE("/orders/:id", authService.AuthMiddleware(), orderHandler.Delete)
+	api.POST("/orders", authHandler.AuthMiddleware(), orderHandler.Save)
+	api.PUT("/orders/:id", authHandler.AuthMiddleware(), orderHandler.Update)
+	api.DELETE("/orders/:id", authHandler.AuthMiddleware(), orderHandler.Delete)
 
 	api.GET("orders/person/:id", gin.BasicAuth(gin.Accounts{
 		cfg.Auth.Username: cfg.Auth.Password,
